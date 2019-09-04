@@ -1,0 +1,67 @@
+use bamazon;
+insert into products (
+product_name ,
+department_name,
+price,
+stock_quantity 
+)
+values(
+"earphone",
+"electronic",
+"10",
+"5"
+),
+(
+"iphone5",
+"phones",
+"500",
+"22"
+),
+(
+"samsung 5",
+"phones",
+"600",
+"5"
+),
+(
+"charger",
+"electronic",
+"10.32",
+"100"
+),
+(
+"freezer",
+"kitchen",
+"900.55",
+"4"
+),
+(
+"toaster",
+"kitchen",
+"69.12",
+"200"
+),
+(
+"pillow",
+"bedroom",
+"10.39",
+"80"
+),
+(
+"blanket",
+"bedroom",
+"12.58",
+"40"
+),
+(
+"remmote controll",
+"electronic",
+"43.10",
+"109"
+),
+(
+"stove",
+"kitchen",
+"789.10",
+"10"
+);
