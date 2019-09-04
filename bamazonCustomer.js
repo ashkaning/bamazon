@@ -50,7 +50,7 @@ function start() {
                 }
             ])
             .then(function (answer) {
-                console.log(answer)
+                //console.log(answer)
                 var getId = answer.product_name.indexOf(',');
                 var getProductId = answer.product_name.substring(0, getId);
                 dataRetrieve(getProductId, answer.userQuantity);
@@ -67,9 +67,10 @@ function dataRetrieve(getProductId, userQuantity) {
     connection.query("SELECT * FROM products Where item_id =?", [getProductId], function (err, results) {
         if (err) throw err;
         var resQuantity = results[0].stock_quantity;
+        var productPrice = results[0].price
         if (resQuantity >= userQuantity) {
             console.log("Great! Product is available to buy");
-            productPurchase(getProductId, resQuantity, userQuantity)
+            productPurchase(getProductId, resQuantity, userQuantity,productPrice)
         }
         else {
             console.log('Insufficient quantity!')
@@ -80,8 +81,9 @@ function dataRetrieve(getProductId, userQuantity) {
     })
 
 }
-function productPurchase(getProductId, resQuantity, userQuantity) {
+function productPurchase(getProductId, resQuantity, userQuantity,productPrice) {
     var updateStock = parseInt(resQuantity) - parseInt(userQuantity)
+    var TotalPrice = (parseFloat(productPrice,2))*(parseInt(userQuantity));
     connection.query("UPDATE products SET ? WHERE ?",
         [{ stock_quantity: updateStock },
         { item_id: getProductId }
@@ -89,6 +91,8 @@ function productPurchase(getProductId, resQuantity, userQuantity) {
         function (err, res) {
             if (err) throw err;
             console.log("Remained Product in Stock: " + updateStock)
+            console.log("Price per Product: "+productPrice)
+            console.log("Total Price: " + TotalPrice)
             connection.end();
         }
     )
