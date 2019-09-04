@@ -16,10 +16,8 @@ var connection = mysql.createConnection({
     database: "bamazon"
 });
 
-// connect to the mysql server and sql database
 connection.connect(function (err) {
     if (err) throw err;
-    // run the start function after the connection is made to prompt the user
     start();
 });
 
@@ -27,7 +25,6 @@ connection.connect(function (err) {
 function start() {
     connection.query("SELECT * FROM products", function (err, results) {
         if (err) throw err;
-        // once you have the items, prompt the user for which they'd like to bid on
         inquirer
             .prompt([
                 {
@@ -47,7 +44,7 @@ function start() {
                     message: "which product would you like to buy?"
                 },
                 {
-                    name: "quantity",
+                    name: "userQuantity",
                     type: "input",
                     message: "how many?"
                 }
@@ -56,11 +53,43 @@ function start() {
                 console.log(answer)
                 var getId = answer.product_name.indexOf(',');
                 var getProductId = answer.product_name.substring(0, getId);
-                console.log(getProductId)
+                dataRetrieve(getProductId, answer.userQuantity);
+
             }
 
             )
     }
 
+    )
+}
+
+function dataRetrieve(getProductId, userQuantity) {
+    connection.query("SELECT * FROM products Where item_id =?", [getProductId], function (err, results) {
+        if (err) throw err;
+        var resQuantity = results[0].stock_quantity;
+        if (resQuantity >= userQuantity) {
+            console.log("Great! Product is available to buy");
+            productPurchase(getProductId, resQuantity, userQuantity)
+        }
+        else {
+            console.log('Insufficient quantity!')
+            connection.end();
+            return
+
+        }
+    })
+
+}
+function productPurchase(getProductId, resQuantity, userQuantity) {
+    var updateStock = parseInt(resQuantity) - parseInt(userQuantity)
+    connection.query("UPDATE products SET ? WHERE ?",
+        [{ stock_quantity: updateStock },
+        { item_id: getProductId }
+        ],
+        function (err, res) {
+            if (err) throw err;
+            console.log("Remained Product in Stock: " + updateStock)
+            connection.end();
+        }
     )
 }
